@@ -81,38 +81,28 @@ const imgHTML = images
   })
   .join("");
 
-gallery.insertAdjacentHTML("beforeend", imgHTML);
+gallery.innerHTML = imgHTML;
 
-const links = document.querySelectorAll(".gallery a");
-links.forEach((link) => {
-  link.addEventListener("click", function (event) {
-    event.preventDefault();
-  });
+gallery.addEventListener("click", function (event) {
+  event.preventDefault();
 });
 
-let instance;
-
-function galleryHandler(event) {
-  if (event.target.nodeName !== "IMG") {
-    return;
-  }
-   instance = basicLightbox.create(`
+function modalOpen(event) {
+  if (event.target.classList.contains("gallery-image")) {
+    const instance = basicLightbox.create(`
     <div class="modal">
-<img src=${event.target.dataset.source} alt=${event.target.alt}>
+    <img src="${event.target.dataset.source}" alt="${event.target.alt}">
     </div>
-`)
+`);
 
-instance.show()
+    function modalExit(event) {
+      if (event.key === "Escape") instance.close();
+    }
+
+    document.addEventListener("keydown", modalExit);
+
+    instance.show();
+  }
 }
 
-
-gallery.addEventListener("click", galleryHandler);
-
-gallery.addEventListener("keydown", () => {
-  if (event.key === 'Escape' && instance)
-  instance.close()
-})
-
-
-
-
+gallery.addEventListener("click", modalOpen);
