@@ -83,11 +83,9 @@ const imgHTML = images
 
 gallery.innerHTML = imgHTML;
 
-gallery.addEventListener("click", function (event) {
-  event.preventDefault();
-});
-
 function modalOpen(event) {
+  event.preventDefault();
+
   if (event.target.classList.contains("gallery-image")) {
     const instance = basicLightbox.create(`
     <div class="modal">
@@ -97,6 +95,7 @@ function modalOpen(event) {
 
     function modalExit(event) {
       if (event.key === "Escape") instance.close();
+      document.removeEventListener("keydown", modalExit);
     }
 
     document.addEventListener("keydown", modalExit);
