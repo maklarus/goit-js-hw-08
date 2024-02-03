@@ -83,25 +83,35 @@ const imgHTML = images
 
 gallery.innerHTML = imgHTML;
 
+let instance;
+
 function modalOpen(event) {
   event.preventDefault();
 
-  if (event.target.classList.contains("gallery-image")) {
-    const instance = basicLightbox.create(`
-    <div class="modal">
+  if (event.target === event.currentTarget) return;
+
+  instance = basicLightbox.create(
+    `
+    <div>
     <img src="${event.target.dataset.source}" alt="${event.target.alt}">
     </div>
-`);
-
-    function modalExit(event) {
-      if (event.key === "Escape") instance.close();
-      document.removeEventListener("keydown", modalExit);
+`,
+    {
+      onShow: () => {
+        document.addEventListener("keydown", modalExit);
+      },
+      onClose: () => {
+        document.removeEventListener("keydown", modalExit);
+      },
     }
+  );
 
-    document.addEventListener("keydown", modalExit);
+  instance.show();
+}
 
-    instance.show();
-  }
+function modalExit(event) {
+  if (event.code !== "Escape") return;
+  instance.close();
 }
 
 gallery.addEventListener("click", modalOpen);
